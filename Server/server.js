@@ -161,7 +161,6 @@ app.post("/login", async (req, res)=> {
         ]
       }
       let additionalButtons;
-      console.log(req.user)
       if(req.user.role=="admin"){
         orderItems = await Order.findAll({where:filterData,include: Orderdetails})
         additionalButtons = true;
@@ -287,7 +286,6 @@ app.post("/login", async (req, res)=> {
       jwt.verify( token, process.env.ACCESS_TOKEN_SECRET ,(err, user ) => {
         if (err) return res.sendStatus(403)
         req.user = user
-        console.log(user)
         next ()
       })
     }

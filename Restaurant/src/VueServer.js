@@ -90,6 +90,7 @@ export class VueServer  {
     
     
     static logout(){
+        const store = useStore();
         const id = localStorage.getItem('id')
         axios.delete(`/logout/${id}`)
         .then(()=>{
@@ -97,6 +98,8 @@ export class VueServer  {
             localStorage.removeItem('accessToken')
             localStorage.removeItem('name')
             localStorage.removeItem('id')
+            localStorage.removeItem('expireTime');
+            store.setUserName("")
         })
     }
 }

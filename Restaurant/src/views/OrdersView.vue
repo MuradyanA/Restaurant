@@ -1,93 +1,13 @@
 <template>
   <div>
-    <!-- <div class="flex justify-center mt-10">
-    <div class="border-collapse ml-2 mt-15 flex justify-center">
-      <div
-          v-if="!message"
-          class="
-            space-y-2
-            flex flex-row
-            bg-gray-400
-            p-10
-            text-cyan-100
-            mt-1
-            rounded-md
-          "
-        >
-
-
-
-
-        <div class="flex flex-row justify-center mt-10">
-          
-        </div>
-        <div class="flex flex-col w-6/12">
-           
-
-          </div>
-
-
-
-
-
-          <div class="flex flex-col w-6/12 ml-10">
-            
-          
-          
-          di
-          
-          </div>
-
-
-          <div class="flex flex-row">
-            <hr />
-          <div>
-            
-          </div>
-          
-        </div>
-      </div>
-    </div>
-    <div class="flex justify-center p-3" v-if="message">
-      <p class="flex flex-row bg-green-300 text-stone-500 w-1/3 rounded-md p-5">
-        <span class="mx-4">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            class="h-6 w-6"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-            stroke-width="2"
-          >
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-            />
-          </svg>
-        </span>
-        <span>{{ message }}</span>
-      </p>
-    </div>
-          </div>
-
-
-
-
-
-
-
-
-
-
- -->
-<div class="flex justify-center mt-5 rounded-sm ">
-  <div class="flex flex-wrap justify-center w-2/4 border-4 border-zinc-400 bg-zinc-400 p-5">
+    <h1 class="font-sans text-5xl ml-16 mt-5 text-gray-600">ORDER</h1>
+    <hr class="mt-5">
+<div class="flex mt-5 rounded-sm ml-10">
+  <div class="flex flex-wrap w-2/4  bg-zinc-300 p-5">
     <div class="flex flex-row  w-full">
-      <h1 class="text-5xl font-bold text-stone-100  w-full mb-5">Order</h1>
     </div>
-    <div class="border-4 border-zinc-400 flex flex-col bg-zinc-400 w-3/6">
-       <span>Name: </span
+    <div class=" flex flex-col bg-zinc-300 w-3/6 px-5">
+       <label class="font-semibold">Name: </label
             ><input
               v-model="order.firstName"
               class="p-2 rounded-md text-zinc-900"
@@ -100,7 +20,7 @@
             >
               {{ orderErrors.firstName }}
             </span>
-            <span>Surname: </span
+            <label class="font-semibold">Surname: </label
             ><input
               v-model="order.secondName"
               class="p-2 rounded-md text-zinc-900"
@@ -114,7 +34,7 @@
               {{ orderErrors.secondName }}
             </span>
           
-            <span>City: </span
+            <label class="font-semibold">City: </label
             ><input
               v-model="order.city"
               class="p-2 rounded-md text-zinc-900"
@@ -124,7 +44,7 @@
             <span v-if="orderErrors.city" class="text-rose-600 font-semibold">
               {{ orderErrors.city }}
             </span>
-            <span>Street: </span
+            <label class="font-semibold">Street: </label
             ><input
               v-model="order.street"
               class="p-2 rounded-md text-zinc-900"
@@ -134,7 +54,7 @@
             <span v-if="orderErrors.street" class="text-rose-600 font-semibold">
               {{ orderErrors.street }}
             </span>
-            <span>Building: </span
+            <label class="font-semibold">Building: </label
             ><input
               v-model="order.building"
               class="p-2 rounded-md text-zinc-900"
@@ -148,8 +68,8 @@
               {{ orderErrors.building }}
             </span>
       </div>
-    <div class="border-4 border-zinc-400 flex flex-col bg-zinc-400 w-3/6">
-      <span>Appartments: </span
+    <div class=" flex flex-col bg-zinc-300 w-3/6 px-5">
+      <label class="font-semibold">Appartments: </label
             ><input
               v-model="order.appartments"
               class="p-2 rounded-md text-zinc-900"
@@ -162,7 +82,7 @@
             >
               {{ orderErrors.appartments }}
             </span>
-            <span>Phone number: </span
+            <label class="font-semibold">Phone number: </label
             ><input
               v-model="order.phoneNumber"
               class="p-2 rounded-md text-zinc-900"
@@ -175,7 +95,7 @@
             >
               {{ orderErrors.phoneNumber }}
             </span>
-            <span>Card holder: </span
+            <label class="font-semibold">Card holder: </label
             ><input
               v-model="order.cardHolder"
               class="p-2 rounded-md text-zinc-900"
@@ -188,7 +108,7 @@
             >
               {{ orderErrors.cardHolder }}
             </span>
-            <span>Card number: </span
+            <label class="font-semibold">Card number: </label
             ><input
               v-model="order.cardNumber"
               class="p-2 rounded-md text-zinc-900"
@@ -201,7 +121,7 @@
             >
               {{ orderErrors.cardNumber }}
             </span>
-            <span>CVV: </span
+            <label class="font-semibold">CVV: </label
             ><input
               v-model="order.cvv"
               class="p-2 rounded-md text-zinc-900"
@@ -215,24 +135,24 @@
             errorMessage
           }}</span>
     </div>
-    <div class="flex flex-row bg-zinc-400 w-full">
-      <h2 class="text-xl font-bold">Order Details</h2>
-            <table class="table-fixed">
-              <thead>
-                <tr class="mb-2">
-                  <th class="px-3">Food name</th>
-                  <th class="px-3">Quantity</th>
+      <h2 class="text-xl mt-3 mb-2">Order Details</h2>
+    <div class="flex flex-row bg-zinc-300 w-full">
+            <table >
+              <thead class="">
+                <tr class="mb-2 flex justify-start">
+                  <th class="px-3 w-28">Food name</th>
+                  <th class="px-6 w-28">Quantity</th>
                   <th class="px-3">Amount</th>
                 </tr>
               </thead>
               <tbody>
-                <tr v-for="item in store.cartList" :key="item.id">
-                  <td class="px-3">{{ item.name }}</td>
-                  <td class="px-3">{{ item.quantity }}</td>
-                  <td class="px-3">{{ item.price * item.quantity }}</td>
+                <tr class="flex justify-start" v-for="item in store.cartList" :key="item.id">
+                  <td class="px-3 w-28">{{ item.name }}</td>
+                  <td class="px-6 w-28">{{ item.quantity }}</td>
+                  <td class="px-3">{{ formatter.format(item.price * item.quantity)}}</td>
                 </tr>
                 <hr class="mt-3">
-                <p class="text-xl font-bold mt-3">Date and time of deleviry</p>
+                <p class=" font-semibold mt-3">Date and time of deleviry</p>
                 <input
                   v-model="order.deliveryTime"
                   type="datetime-local"
@@ -242,11 +162,11 @@
               </tbody>
             </table>
     </div>
-    <div class="flex flex-col bg-zinc-400 w-full">
-      <span class="text-2xl font-semibold">Total: {{ store.totalForCartList }} AMD</span
+    <div class="flex flex-col bg-zinc-300 w-full">
+      <span class="text-xl font-semibold">Total: {{ formatter.format(store.totalForCartList) }}</span
     >
     <button
-      class="rounded-full mt-3 bg-green-600 h-10 w-40"
+      class="rounded-md mt-5 bg-green-600 w-28 p-2 hover:bg-green-800 duration-500  text-white"
       @click="sendOrder(item)"
     >
       Purchase
@@ -264,6 +184,7 @@
 import { useStore } from "@/store";
 import { onMounted, ref } from "vue";
 import { VueServer } from "../VueServer.js";
+import  router from "../router";
 import moment from "moment";
 const store = useStore();
 const message = ref("");
@@ -293,38 +214,17 @@ const orderErrors = ref({
   cvv: "",
   deliveryTime: "",
 });
+
+let formatter = new Intl.NumberFormat('en-US', {
+  style: 'currency',
+  currency: 'AMD',
+});
+onMounted(() => {
+  if(!localStorage.getItem("name")){
+    router.push({ name: 'login'})
+  }
+});
 const sendOrder = () => {
-  // if (order.value.firstName == null) {
-  //   orderErrors.value.firstName = "Firstname field is empty";
-  // }
-  // if (order.value.secondName == null) {
-  //   orderErrors.value.secondName = "Secondname field is empty";
-  // }
-  // if (order.value.city == null) {
-  //   orderErrors.value.city = "City field is empty";
-  // }
-  // if (order.value.street == null) {
-  //   orderErrors.value.street = "Street field is empty";
-  // }
-  // if (order.value.building == null) {
-  //   orderErrors.value.building = "Building field is empty";
-
-  // }
-  // if (order.value.appartments == null) {
-  //   orderErrors.value.appartments = "Appartments field is empty";
-  // }
-  // if (order.value.phoneNumber == null) {
-  //   orderErrors.value.phoneNumber = "Phonenumber field is empty";
-  // }
-  // if (order.value.cardHolder == null) {
-  //   orderErrors.value.cardHolder = "Cardholder field is empty";
-  // }if (order.value.cardNumber == null) {
-  //   orderErrors.value.cardNumber = "Cardnumber field is empty";
-  // }if (order.value.cvv == null) {
-  //   orderErrors.value.cvv = "CVV field is empty";
-  //   return;
-  // }
-
   VueServer.post("/order", order.value, true)
     .then(() => {
       message.value = "Your order has been placed successfully!";

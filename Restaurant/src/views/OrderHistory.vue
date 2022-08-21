@@ -1,7 +1,7 @@
 <template>
 <div class="flex flex-row ">
 <div class="w-2/3 ml-5 ">
-  <h2 class="font-sans text-5xl ml-10 mt-5 text-gray-600">ORDER HISTORY</h2>
+  <h1 class="font-sans text-5xl ml-10 mt-5 text-gray-600">ORDER HISTORY</h1>
   <hr class="mt-5">
     <div class="flex flex-col mt-5">
     <div class="p-2">
@@ -73,7 +73,7 @@
 <div class="w-1/3 pt-40">
   <h4 class="font-sans text-2xl ml-5 text-gray-600 mb-11">ORDER DETAILS</h4>
   <table class="border-1 border-zinc-200 ml-2 sticky top-0">
-              <thead class="bg-zinc-300">
+              <thead class="bg-zinc-400 text-zinc-100">
                 <tr class="mb-2">
                   <th class="px-3 border-slate-600 p-5">Food name</th>
                   <th class="px-3 border-slate-600 p-5">Quantity</th>
@@ -81,7 +81,7 @@
                 </tr>
               </thead>
               <tbody class="bg-zinc-200">
-                <tr v-for="item in currentDetails" :key="item.id">
+                <tr class="even:bg-zinc-200 odd:bg-zinc-300 odd:text-zinc-600" v-for="item in currentDetails" :key="item.id">
                   <td class="px-3 border-slate-600 p-5">{{ item.foodName }}</td>
                   <td class="px-3 border-slate-600 p-5">{{ item.quantity }}</td>
                   <td class="px-3 border-slate-600 p-5">{{ item.price * item.quantity }}</td>

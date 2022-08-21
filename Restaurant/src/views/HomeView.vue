@@ -28,7 +28,7 @@ function addtoCart(obj) {
     </div>
 
     <div class="w-9/12 mx-auto">
-      <div class="grid grid-cols-4 gap-10 grid-rows-3 pt-5">
+      <div class="grid grid-cols-4 gap-10 grid-rows-2 pt-5">
         <FoodCard
           @addedToCart="addtoCart"
           :id="card.id"
