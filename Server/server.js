@@ -114,6 +114,7 @@ app.post("/login", async (req, res)=> {
         return res.sendStatus(403)
       }
       const cartItem = await Cart.findByPk(req.body.id)
+
       if(cartItem.userId==req.user.id){
         cartItem.quantity = req.body.qty
         await cartItem.save()
