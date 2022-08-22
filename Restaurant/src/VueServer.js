@@ -16,6 +16,7 @@ export class VueServer  {
                 localStorage.setItem('refreshToken', resp.data.refreshToken);
                 localStorage.setItem('name', resp.data.name);
                 localStorage.setItem('expireTime', resp.data.expireTime);
+                localStorage.setItem('id', resp.data.id);
                 store.setUserName(resp.data.name) 
                 resolve();
             }).catch((err) => {
