@@ -69,7 +69,7 @@ onMounted(() => {
             "
           >
             Cart
-            <span class="border-2 rounded-full px-2 bg-red-600">{{
+            <span class="rounded-full px-2 bg-red-600">{{
               store.cartItemsCount
             }}</span>
           </li>

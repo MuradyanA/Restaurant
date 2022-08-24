@@ -1,4 +1,4 @@
-import { defineStore } from 'pinia'
+import { defineStore, storeToRefs } from 'pinia'
 
 export const useStore = defineStore('counter', {
   state: () => ({ 
@@ -40,6 +40,7 @@ export const useStore = defineStore('counter', {
             return true
           }})
           this.cartList.splice(findIndex,1)
+          this.cartItemsCount = this.cartItemsCount - 1
         },
         changeQuantity(item,plusMinus){
           if(plusMinus){

@@ -1,7 +1,7 @@
 <script setup>
 import { ref } from "vue";
 import { useStore } from "@/store";
-import {VueServer} from '../VueServer.js'
+import { VueServer } from "../VueServer.js";
 
 const props = defineProps({
   id: Number,
@@ -13,17 +13,19 @@ const props = defineProps({
 const store = useStore();
 const qty = ref(1);
 const addToCart = function () {
-  VueServer.post("/cart", {id: props.id, quantity:qty.value}, true)
-  .then((response)=>{
-  store.addToCart({
-    id: props.id,
-    name: props.name,
-    img: props.img,
-    price: props.price,
-    quantity: qty.value,
-    });
-    store.setItemsCount(response.data.items);
-  });
+  VueServer.post("/cart", { id: props.id, quantity: qty.value }, true).then(
+    (response) => {
+      store.addToCart({
+        id: response.data.id,
+        UserId: localStorage.getItem("id"),
+        name: props.name,
+        img: props.img,
+        price: props.price,
+        quantity: qty.value,
+      });
+      store.setItemsCount(response.data.items);
+    }
+  );
   return { qty, addToCart };
 };
 </script>

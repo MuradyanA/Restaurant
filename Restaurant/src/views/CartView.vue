@@ -129,6 +129,7 @@ onMounted(() => {
 });
 const updateQuantity = (item, plusMinus) => {
   let qty;
+  console.log(item)
   if (plusMinus) {
     qty = item.quantity + 1;
   } else {

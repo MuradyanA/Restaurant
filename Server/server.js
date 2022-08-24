@@ -72,7 +72,7 @@ app.post("/login", async (req, res)=> {
           expireTime:Date.now()+(120*1000)
         });
         }else{
-          return res.status(401).send('Login failed');
+          return res.status(401).send('Email or password are incorrect');
         }})
       }
     });
@@ -89,10 +89,10 @@ app.post("/login", async (req, res)=> {
     
     app.post("/cart", [authenticateToken, isExistingUser] ,async function(req,res){
       const food = await Foods.findOne({where:{id:req.body.id}})
-      const cartItem = await Cart.findOne({where:{userId:req.user.id,name:food.name}})
+      let cartItem = await Cart.findOne({where:{userId:req.user.id,name:food.name}})
       if(food!=null){
         if(cartItem==null){
-          await Cart.create({
+          cartItem = await Cart.create({
             userId:req.user.id,
             name:food.name,
             price:food.price,
@@ -105,7 +105,7 @@ app.post("/login", async (req, res)=> {
         }
       }
       const cartItemQuantity = await Cart.count({where:{userId:req.user.id}})
-      return res.json({items:cartItemQuantity})
+      return res.json({id:cartItem.id,items:cartItemQuantity})
     })
     
     

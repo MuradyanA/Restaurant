@@ -12,18 +12,16 @@ export class VueServer  {
                 formDataErrors.value.email = "";
                 formData.value.pass = "";
                 formDataErrors.value.pass = ""
+                localStorage.setItem('id', resp.data.id);
                 localStorage.setItem('accessToken', resp.data.accessToken);
                 localStorage.setItem('refreshToken', resp.data.refreshToken);
                 localStorage.setItem('name', resp.data.name);
                 localStorage.setItem('expireTime', resp.data.expireTime);
-                localStorage.setItem('id', resp.data.id);
                 store.setUserName(resp.data.name) 
                 resolve();
             }).catch((err) => {
-                err.response.data.errors.forEach((element) => {
-                    formDataErrors.value[element.path] += " " + element.message;
+                    formDataErrors.value.pass += " " + err.response.data;
                     reject();
-                });
             })})
             
     }
@@ -100,6 +98,8 @@ export class VueServer  {
             localStorage.removeItem('name')
             localStorage.removeItem('id')
             localStorage.removeItem('expireTime');
+            store.cartList = []
+            store.cartItemsCount = 0
             store.setUserName("")
         })
     }
