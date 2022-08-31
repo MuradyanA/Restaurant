@@ -10,17 +10,6 @@ const logout = () => {
   VueServer.logout();
 };
 
-onMounted(() => {
-  if (localStorage.accessToken) {
-    VueServer.get("/cart", true).then((resp) => {
-      store.setCartItems(resp.data.cartData);
-      store.setItemsCount(resp.data.cartData.length);
-      if (!store.userName) {
-        store.setUserName(localStorage.getItem("name"));
-      }
-    });
-  }
-});
 </script>
 
 <template>

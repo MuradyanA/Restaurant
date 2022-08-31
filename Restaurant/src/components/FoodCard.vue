@@ -39,8 +39,6 @@ const addToCart = function () {
       text-xl
       bg-gray-100
       rounded-lg
-      transition
-      ease-in-out
       delay-50
       drop-shadow-2xl
     "

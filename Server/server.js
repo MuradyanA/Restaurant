@@ -77,8 +77,8 @@ app.post("/login", async (req, res)=> {
       }
     });
     
-    app.get("/foodcards", function (req, res) {
-      Foods.findAll().then((r)=>{
+    app.get("/foodcards",async function (req, res) {
+      await Foods.findAll().then((r)=>{
         let arr = []
         arr = r.map(element => element.get())
         res.json(arr);
@@ -108,7 +108,10 @@ app.post("/login", async (req, res)=> {
       return res.json({id:cartItem.id,items:cartItemQuantity})
     })
     
-    
+    app.get("/cart",[authenticateToken, isExistingUser],async function(req,res){
+      const cartData = await Cart.findAll({where:{userId:req.user.id}})
+      return res.json({cartData});
+    })
     app.put("/cart",[authenticateToken, isExistingUser],async function(req,res){
       if(req.body.qty<1){
         return res.sendStatus(403)
@@ -132,10 +135,7 @@ app.post("/login", async (req, res)=> {
         return res.sendStatus(403)
       }
     })
-    app.get("/cart",[authenticateToken, isExistingUser],async function(req,res){
-      const cartData = await Cart.findAll({where:{userId:req.user.id}})
-      return res.json({cartData});
-    })
+    
 
     app.get("/orderhistory",[authenticateToken, isExistingUser],async function(req,res){
       let orderItems;

@@ -126,6 +126,13 @@ onMounted(() => {
   if (!localStorage.getItem("name")) {
     router.push({ name: "login" });
   }
+  VueServer.get("/cart", true).then((resp) => {
+      store.setCartItems(resp.data.cartData);
+      store.setItemsCount(resp.data.cartData.length);
+      if (!store.userName) {
+        store.setUserName(localStorage.getItem("name"));
+      }
+    });
 });
 const updateQuantity = (item, plusMinus) => {
   let qty;

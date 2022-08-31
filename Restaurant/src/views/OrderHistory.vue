@@ -43,7 +43,7 @@
         </thead>
         <tbody>
           <template v-if="orders.history.length > 0">
-            <tr class="cursor-pointer border-collapse   ml-2 mt-5 even:bg-zinc-200 odd:bg-zinc-300 odd:text-zinc-600"  v-for="item in orders.history" :key="item.id" @click="setCurrentDetails(item.id)" :class="(item.id==selectedRowId) ? 'bg-sky-400' : 'bg-zinc-300'">
+            <tr class="cursor-pointer border-collapse   ml-2 mt-5 bg-zinc-200 text-zinc-600"  v-for="item in orders.history" :key="item.id" @click="setCurrentDetails(item.id)" :class="(item.id==selectedRowId) ? 'bg-sky-400' : 'bg-zinc-200'">
                 <td class="pl-2"> {{item.firstName + " " + item.secondName}}</td>
                 <td> {{moment(item.createdAt).format('DD/MM/YYYY, h:mm a')}}</td>
                 <td> {{moment(item.deliveryTime).format('DD/MM/YYYY, h:mm a')}}</td>
