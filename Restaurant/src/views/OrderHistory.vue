@@ -196,6 +196,7 @@
     <div class="pt-40">
       <h4 class="font-sans text-2xl ml-5 text-gray-600 mb-11">ORDER DETAILS</h4>
       <table class="border-1 border-zinc-200 ml-2 sticky top-0">
+        <hr class="mt-1" />
         <thead class="bg-zinc-400 text-zinc-100">
           <tr class="mb-2">
             <th class="px-3 border-slate-600 p-5">Food name</th>
