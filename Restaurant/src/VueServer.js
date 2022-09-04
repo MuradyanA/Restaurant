@@ -1,11 +1,12 @@
 import axios from "axios";
 import  router from "./router";
 import { useStore } from "./store";
+const instance = axios.create({baseURL: 'http://localhost:8080'})
 export class VueServer  {
     static login(formData,formDataErrors) {
         const store = useStore();
         return new Promise(( resolve, reject)=>{
-            axios
+            instance
             .post("/login",formData.value)
             .then((resp) => {
                 formData.value.email = "";
@@ -17,6 +18,7 @@ export class VueServer  {
                 localStorage.setItem('refreshToken', resp.data.refreshToken);
                 localStorage.setItem('name', resp.data.name);
                 localStorage.setItem('expireTime', resp.data.expireTime);
+                store.setCartItems(resp.data.cartInfo)
                 store.setUserName(resp.data.name) 
                 resolve();
             }).catch((err) => {
@@ -45,7 +47,7 @@ export class VueServer  {
                 router.push({ name: 'login'})
                 reject("Refresh token doesn't exist!")  
             } 
-            axios.post('/token',{refreshToken}).then((resp)=>{
+            instance.post('/token',{refreshToken}).then((resp)=>{
                 localStorage.setItem('accessToken', resp.data.accessToken);    
                 localStorage.setItem('expireTime', resp.data.expireTime);
                 store.setUserName(resp.data.name) 
@@ -81,7 +83,7 @@ export class VueServer  {
                 router.push({ name: 'login'})
                 reject("Access token doesn't exist!")
             }
-            axios(options)
+            instance(options)
             .then((resp)=>resolve(resp)).catch((err)=>reject(err))
         })
         
@@ -91,7 +93,7 @@ export class VueServer  {
     static logout(){
         const store = useStore();
         const id = localStorage.getItem('id')
-        axios.delete(`/logout/${id}`)
+        instance.delete(`/logout/${id}`)
         .then(()=>{
             localStorage.removeItem('refreshToken')
             localStorage.removeItem('accessToken')

@@ -136,9 +136,13 @@
           }}</span>
     </div>
       <h2 class="text-xl mt-3 mb-2">Order Details</h2>
+      
     <div class="flex flex-row bg-zinc-300 w-full">
             <table >
               <thead class="">
+                <span class="text-rose-600 font-semibold">{{
+            orderErrors.cart
+          }}</span>
                 <tr class="mb-2 flex justify-start">
                   <th class="px-3 w-28">Food name</th>
                   <th class="px-6 w-28">Quantity</th>
@@ -158,6 +162,13 @@
                   type="datetime-local"
                   class="p-2 text-zinc-900 mt-5 rounded-md"
                 />
+                <br>
+                <span
+              v-if="orderErrors.deliveryTime"
+              class="text-rose-600 font-semibold"
+            >
+              {{ orderErrors.deliveryTime }}
+            </span>
                 <hr class="mt-3" />
               </tbody>
             </table>
@@ -171,7 +182,8 @@
     >
       Purchase
     </button>
-
+    <p v-if="message" class="text-lime-500">{{message}}</p>
+    
 
     </div>
   </div>
@@ -213,6 +225,7 @@ const orderErrors = ref({
   cardNumber: "",
   cvv: "",
   deliveryTime: "",
+  cart:""
 });
 
 let formatter = new Intl.NumberFormat('en-US', {
@@ -227,11 +240,11 @@ onMounted(() => {
 const sendOrder = () => {
   VueServer.post("/order", order.value, true)
     .then(() => {
-      message.value = "Your order has been placed successfully!";
       store.emptyCart();
+      message.value = "Your order has been placed successfully!"
     })
     .catch((err) => {
-
+      console.log(err);
       err.response.data.errors.forEach((elem) => {
         orderErrors.value[elem.path] = elem.message;
       });

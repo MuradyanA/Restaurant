@@ -1,6 +1,5 @@
 <script setup>
 import { RouterLink, RouterView } from "vue-router";
-import HelloWorld from "@/components/HelloWorld.vue";
 import { useStore } from "@/store";
 import { VueServer } from "./VueServer.js";
 import { onMounted } from "vue";
@@ -9,11 +8,19 @@ const store = useStore();
 const logout = () => {
   VueServer.logout();
 };
+onMounted(() => {
+  VueServer.get("/cart", true).then((resp) => {
+      store.setCartItems(resp.data.cartData);
+      if (!store.userName) {
+        store.setUserName(localStorage.getItem("name"));
+      }
+    });
+});
 
 </script>
 
 <template>
-  <div class="w-full flex flex-col justify-between h-screen">
+  <div class="w-full flex flex-col justify-between h-screen ">
     <div class="bg-sky-600 mt-0">
       <ul
         class="
@@ -59,7 +66,7 @@ const logout = () => {
           >
             Cart
             <span class="rounded-full px-2 bg-red-600">{{
-              store.cartItemsCount
+              store.CartItemsCount
             }}</span>
           </li>
         </router-link>

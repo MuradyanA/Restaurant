@@ -23,7 +23,6 @@ const addToCart = function () {
         price: props.price,
         quantity: qty.value,
       });
-      store.setItemsCount(response.data.items);
     }
   );
   return { qty, addToCart };
@@ -53,10 +52,10 @@ const addToCart = function () {
           <label>Quantity: </label>
           <input v-model="qty" type="number" min="1" class="w-14 rounded" />
         </div>
-        <button @click="addToCart" class="py-1 px-4 bg-neutral-900 rounded">
+        <button @click="addToCart" class="py-1 px-4 bg-neutral-900 rounded hover:scale-105 active:bg-lime-600 transition duration-50 active:scale-125 ">
           <svg
             xmlns="http://www.w3.org/2000/svg"
-            class="h-6 w-6 text-gray-300"
+            class="h-6 w-6 text-gray-300 "
             fill="none"
             viewBox="0 0 24 24"
             stroke="currentColor"

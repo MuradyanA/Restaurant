@@ -15,7 +15,8 @@ const moment = require('moment');
 
 app.use(express.static(path));
 var corsOptions = {
-  origin: "http://localhost:8080",
+ // origin: "*",
+   origin: "http://localhost:8080",
 };
 app.use(cors(corsOptions));
 app.use(bodyParser.json());
@@ -64,12 +65,14 @@ app.post("/login", async (req, res)=> {
         const refreshToken = jwt.sign( {id:loginUser.id, role:loginUser.role, name: loginUser.firstName, email:loginUser.email, }, process.env.REFRESH_TOKEN_SECRET )
 
         await Refreshtoken.create({userId:loginUser.id, token:refreshToken })
+        const cartInfo = await Cart.findAll({where:{userId:loginUser.id}})
         res.json({
           accessToken:accessToken,
           refreshToken:refreshToken, 
           name:loginUser.firstName, 
           id:loginUser.id,
-          expireTime:Date.now()+(120*1000)
+          expireTime:Date.now()+(120*1000),
+          cartInfo
         });
         }else{
           return res.status(401).send('Email or password are incorrect');
@@ -226,6 +229,10 @@ app.post("/login", async (req, res)=> {
         where:{userId:req.user.id},
         attributes:{exclude:['createdAt','updatedAt','id']}
       })
+      if(orderDetails.length==0){
+        return res.status(400).json({errors:[{message:"The cart is empty",path:"cart"}]})
+
+      }
       let ordded = orderDetails.map((obj)=>{
         let el = obj.dataValues
         delete el.userId;
@@ -240,6 +247,7 @@ app.post("/login", async (req, res)=> {
         }
       });
       await Orderdetails.bulkCreate(ordded);
+      return res.json("OK")
     })
 
     

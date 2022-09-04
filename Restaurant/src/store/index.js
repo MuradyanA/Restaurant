@@ -4,18 +4,15 @@ export const useStore = defineStore('counter', {
   state: () => ({ 
     cartList :[],
     user:"",
-    cartItemsCount:0,
   }),
   getters: {
     totalForCartList: state => state.cartList.reduce(function(previousValue, item, index, array) {
       return (item.price * item.quantity) + previousValue
     }, 0),
     userName: state=> state.user,
+    CartItemsCount: state => state.cartList.length,
   },
   actions: {
-    setItemsCount(number){
-      this.cartItemsCount = number
-    },
     addToCart(obj){
       let findIndex;
       let findObj = this.cartList.find(function(item, index, array) {
@@ -56,7 +53,8 @@ export const useStore = defineStore('counter', {
           this.user = name;
         },
         emptyCart(){
-          this.cartList.splice(0,this.cartList-1)
+          this.cartList.splice(0,this.cartList.length)
+          console.log(this.cartList);
         }
       },
     })
