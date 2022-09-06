@@ -17,7 +17,7 @@ const addToCart = function () {
     (response) => {
       store.addToCart({
         id: response.data.id,
-        UserId: localStorage.getItem("id"),
+        UserId: store.userId,
         name: props.name,
         img: props.img,
         price: props.price,

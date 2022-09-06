@@ -123,15 +123,9 @@ let formatter = new Intl.NumberFormat("en-US", {
   currency: "AMD",
 });
 onMounted(() => {
-  if (!localStorage.getItem("name")) {
-    router.push({ name: "login" });
-  }
   VueServer.get("/cart", true).then((resp) => {
-      store.setCartItems(resp.data.cartData);
-      if (!store.userName) {
-        store.setUserName(localStorage.getItem("name"));
-      }
-    });
+    store.setCartItems(resp.data.cartData);
+  });
 });
 const updateQuantity = (item, plusMinus) => {
   let qty;

@@ -9,12 +9,14 @@ const logout = () => {
   VueServer.logout();
 };
 onMounted(() => {
-  VueServer.get("/cart", true).then((resp) => {
-      store.setCartItems(resp.data.cartData);
-      if (!store.userName) {
-        store.setUserName(localStorage.getItem("name"));
-      }
-    });
+  VueServer.updatetoken()
+  .then(()=>{
+    if(store.accessToken){
+      VueServer.get("/cart", true).then((resp) => {
+        store.setCartItems(resp.data.cartData);
+      });
+    }
+  })
 });
 
 </script>

@@ -1,5 +1,6 @@
 require('dotenv').config(); 
 const express = require("express");
+const cookieParser = require("cookie-parser");
 const bodyParser = require("body-parser");
 const cors = require("cors");
 const path = __dirname + "/views/";
@@ -13,9 +14,9 @@ const { access } = require('fs');
 const moment = require('moment');
 
 
+app.use(cookieParser());
 app.use(express.static(path));
 var corsOptions = {
- // origin: "*",
    origin: "http://localhost:8080",
 };
 app.use(cors(corsOptions));
@@ -25,7 +26,7 @@ const db = require("./models");
 const { now } = require('moment');
 // const { where } = require('sequelize/types');
 Cart.belongsTo(Foods)
-//
+
 
 
 
@@ -66,14 +67,13 @@ app.post("/login", async (req, res)=> {
 
         await Refreshtoken.create({userId:loginUser.id, token:refreshToken })
         const cartInfo = await Cart.findAll({where:{userId:loginUser.id}})
-        res.json({
+        res.cookie('refreshToken',refreshToken,{httpOnly: true}).json({
           accessToken:accessToken,
-          refreshToken:refreshToken, 
           name:loginUser.firstName, 
           id:loginUser.id,
           expireTime:Date.now()+(120*1000),
           cartInfo
-        });
+        }).send()
         }else{
           return res.status(401).send('Email or password are incorrect');
         }})
@@ -206,6 +206,13 @@ app.post("/login", async (req, res)=> {
     
     app.post("/order",[authenticateToken, isExistingUser],async function(req,res){
       let order
+      const orderDetails = await Cart.findAll({
+        where:{userId:req.user.id},
+        attributes:{exclude:['createdAt','updatedAt','id']}
+      })
+      if(orderDetails.length==0){
+        return res.status(400).json({errors:[{message:"The cart is empty",path:"cart"}]})
+      }
       try{
           order = await Order.create({
           firstName:req.body.firstName,
@@ -225,14 +232,7 @@ app.post("/login", async (req, res)=> {
       }catch(err){
         return res.status ( 400 ).json(err)
       }
-      const orderDetails = await Cart.findAll({
-        where:{userId:req.user.id},
-        attributes:{exclude:['createdAt','updatedAt','id']}
-      })
-      if(orderDetails.length==0){
-        return res.status(400).json({errors:[{message:"The cart is empty",path:"cart"}]})
-
-      }
+  
       let ordded = orderDetails.map((obj)=>{
         let el = obj.dataValues
         delete el.userId;
@@ -255,23 +255,24 @@ app.post("/login", async (req, res)=> {
     
     
     app.post( '/token', (req, res)=>{
-      const refreshToken = req.body.refreshToken
+      const refreshToken = req.cookies.refreshToken
       if (refreshToken == null) return res.sendStatus ( 401 )
-      
       if(Refreshtoken.findOne({where:{token:refreshToken}})){
         console.log("Token exists")
       }else{
         console.log("Token doesn't exists")
+        return res.sendStatus ( 401 )
       }
       jwt.verify(refreshToken,process.env.REFRESH_TOKEN_SECRET,(err,user)=>{
         if(err) return res.sendStatus(403)
         const accessToken = jwt.sign( {name: user.name, email:user.email, id:user.id, role:user.role}, process.env.ACCESS_TOKEN_SECRET ,{expiresIn:'120s'})
-        res.json({name:user.name,accessToken,expireTime:Date.now()+(120*1000)})
+        res.json({id:user.id,name:user.name,accessToken,expireTime:Date.now()+(120*1000)})
       })
     })
        
-    app.delete('/logout/:id',async(req,res)=>{
+    app.delete('/logout/:id',[authenticateToken, isExistingUser],async(req,res)=>{
       await Refreshtoken.destroy({where:{userId: req.params.id}});
+      res.clearCookie("refreshToken")
       res.sendStatus(204)
     })
     
@@ -309,3 +310,12 @@ app.post("/login", async (req, res)=> {
         }
       })
     }
+
+    // function validateCookie(req,res,next){
+    //   const { cookies } = req
+    //   if("refreshToken" in cookies){
+    //     console.log();
+    //   }
+    //   console.log(cookies)
+    //   next()
+    // }

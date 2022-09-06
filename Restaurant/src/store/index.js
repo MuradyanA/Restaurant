@@ -3,7 +3,10 @@ import { defineStore, storeToRefs } from 'pinia'
 export const useStore = defineStore('counter', {
   state: () => ({ 
     cartList :[],
+    userId:"",
     user:"",
+    accessToken:"",
+    expireTime:"",
   }),
   getters: {
     totalForCartList: state => state.cartList.reduce(function(previousValue, item, index, array) {

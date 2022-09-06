@@ -130,6 +130,7 @@
                   class="w-28 flex justify-between px-2 align-middle h-14 pl-2"
                 >
                   <button
+                  title="Back"
                     v-if="additionalButtons == true"
                     @click="changeStatus('back', item.id)"
                   >
@@ -149,6 +150,7 @@
                     </svg>
                   </button>
                   <button
+                  title="Forward"
                     v-if="additionalButtons == true"
                     @click="changeStatus('forward', item.id)"
                   >
@@ -168,6 +170,7 @@
                     </svg>
                   </button>
                   <button
+                  title="Cancel Order"
                     v-if="item.status !== 'Canceled'"
                     @click="changeStatus('cancel', item.id)"
                   >
@@ -252,10 +255,10 @@ const setCurrentDetails = (id) => {
   selectedRowId.value = id;
 };
 onMounted(() => {
-  search.value.start = moment(Date.now() - 3 * (24 * 3600 * 1000)).format(
-    "yyyy-MM-DDThh:mm"
+  search.value.start = moment(Date.now() - 4 * (24 * 3600 * 1000)).startOf('date').format(
+    "yyyy-MM-DDTHH:mm"
   );
-  search.value.end = moment(Date.now()).format("yyyy-MM-DDThh:mm");
+  search.value.end = moment(Date.now()).endOf('date').format("yyyy-MM-DDTHH:mm");
   filterOrders();
 });
 const changeStatus = (button, orderId) => {
@@ -277,8 +280,8 @@ const filterOrders = () => {
     return;
   }
   url += `start=${moment(search.value.start).format(
-    "yyyy-MM-DDThh:mm"
-  )}&end=${moment(search.value.end).format("yyyy-MM-DDThh:mm")}`;
+    "yyyy-MM-DDTHH:mm"
+  )}&end=${moment(search.value.end).format("yyyy-MM-DDTHH:mm")}`;
   VueServer.get(url, true).then(function (response) {
     orders.history = response.data.orderItems;
     additionalButtons.value = response.data.additionalButtons;

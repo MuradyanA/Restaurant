@@ -13,11 +13,10 @@ export class VueServer  {
                 formDataErrors.value.email = "";
                 formData.value.pass = "";
                 formDataErrors.value.pass = ""
-                localStorage.setItem('id', resp.data.id);
-                localStorage.setItem('accessToken', resp.data.accessToken);
-                localStorage.setItem('refreshToken', resp.data.refreshToken);
-                localStorage.setItem('name', resp.data.name);
-                localStorage.setItem('expireTime', resp.data.expireTime);
+                store.userId = resp.data.id;
+                store.accessToken = resp.data.accessToken;
+                store.user = resp.data.name;
+                store.expireTime = resp.data.expireTime;
                 store.setCartItems(resp.data.cartInfo)
                 store.setUserName(resp.data.name) 
                 resolve();
@@ -42,20 +41,20 @@ export class VueServer  {
     static updatetoken(){
         const store = useStore();
         return new Promise((resolve,reject)=>{
-            const refreshToken = localStorage.getItem('refreshToken')
-            if(refreshToken==null){
-                router.push({ name: 'login'})
-                reject("Refresh token doesn't exist!")  
-            } 
-            instance.post('/token',{refreshToken}).then((resp)=>{
-                localStorage.setItem('accessToken', resp.data.accessToken);    
-                localStorage.setItem('expireTime', resp.data.expireTime);
-                store.setUserName(resp.data.name) 
+            instance.post('/token').then((resp)=>{
+                store.accessToken = resp.data.accessToken;  
+                store.expireTime = resp.data.expireTime;
+                store.user = resp.data.name 
+                store.userId = resp.data.id
                 resolve()
+            }).catch(()=>{
+                router.push({ name: 'login'})
+                reject("Refresh token doesn't exist!") 
             })
         })
     }
     static async request(url,method,body,authorization=false){
+        const store = useStore();
         let options ={};
         let token;
         if(method=='get'){
@@ -71,11 +70,11 @@ export class VueServer  {
             };
         }
         if(authorization){
-            let timeDif = localStorage.getItem("expireTime")-Date.now()
+            let timeDif = store.expireTime-Date.now()
             if(timeDif<110*1000){
                 await this.updatetoken()
             }
-            token = localStorage.getItem('accessToken')
+            token = store.accessToken
             options.headers= { 'Authorization': `Bearer ${token}` };    
         }
         return new Promise((resolve,reject)=>{
@@ -92,17 +91,15 @@ export class VueServer  {
     
     static logout(){
         const store = useStore();
-        const id = localStorage.getItem('id')
-        instance.delete(`/logout/${id}`)
+        const id = store.userId
+        this.request(`logout/${id}`,'delete','', true)
         .then(()=>{
-            localStorage.removeItem('refreshToken')
-            localStorage.removeItem('accessToken')
-            localStorage.removeItem('name')
-            localStorage.removeItem('id')
-            localStorage.removeItem('expireTime');
+            store.refreshToken ="";
+            store.accessToken ="";
+            store.user ="";
+            store.userId ="";
+            store.expireTime ="";
             store.cartList = []
-            store.cartItemsCount = 0
-            store.setUserName("")
         })
     }
 }
