@@ -84,8 +84,7 @@ export class VueServer  {
             }
             instance(options)
             .then((resp)=>resolve(resp)).catch((err)=>reject(err))
-        })
-        
+        })        
     }
     
     

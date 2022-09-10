@@ -67,7 +67,7 @@ app.post("/login", async (req, res)=> {
 
         await Refreshtoken.create({userId:loginUser.id, token:refreshToken })
         const cartInfo = await Cart.findAll({where:{userId:loginUser.id}})
-        res.cookie('refreshToken',refreshToken,{httpOnly: true}).json({
+        res.cookie('refreshToken',refreshToken,{httpOnly: true , sameSite:'strict'}).json({
           accessToken:accessToken,
           name:loginUser.firstName, 
           id:loginUser.id,
