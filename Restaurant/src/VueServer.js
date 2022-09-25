@@ -28,7 +28,6 @@ export class VueServer  {
             
     }
     static get(url,authorization){
-        console.log(authorization,"   Authorization");
         return this.request(url,'get',null, authorization)
     }
     static post(url,body, authorization){
@@ -100,6 +99,7 @@ export class VueServer  {
             store.accessToken ="";
             store.user ="";
             store.userId ="";
+            store.role ="";
             store.expireTime ="";
             store.cartList = []
         })

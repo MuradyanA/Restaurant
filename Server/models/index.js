@@ -31,6 +31,7 @@ Object.keys(db).forEach(modelName => {
 db.Orderdetails.belongsTo(db.Order);
 db.Order.hasMany(db.Orderdetails);
 db.Order.belongsTo(db.User);
+db.Cart.belongsTo(db.Foods)
 //db.Order.belongsTo(db.User)
 //db.Order.sync({ force: true })
 //db.Foods.sync({ force: true })

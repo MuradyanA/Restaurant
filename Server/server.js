@@ -16,8 +16,6 @@ const multer = require('multer');
 const sharp = require('sharp');
 const fs = require('fs')
 
-
-
 const filterStorageEngine = multer.diskStorage({
   destination:(req, file, cb)=>{
     cb(null,'./views/FoodPictures')
@@ -27,16 +25,6 @@ const filterStorageEngine = multer.diskStorage({
   }
 })
 const upload = multer({ storage: filterStorageEngine });
-
-
-// function processImage (req, res, next){
-//   if(req.file) {
-//     multer({storage:filterStorageEngine}).single('image')
-//     next ()
-//   } else {
-//     next ()
-//   }
-// }
 
 const authenticateToken =  (strict, req, res, next) => {
   const authHeader = req.headers['authorization']
@@ -83,13 +71,6 @@ app.use(bodyParser.urlencoded({ extended: true }));
 const db = require("./models");
 const { now } = require('moment');
 const { strict } = require('assert');
-// const { where } = require('sequelize/types');
-Cart.belongsTo(Foods)
-
-
-
-
-
 
 app.get("/", function (req, res) {
   res.sendFile(path + "index.html");
@@ -109,6 +90,7 @@ app.post("/register", async (req, res)=> {
     return res.status ( 400 ).json(err)
   }
 });
+
 app.post("/login", async (req, res)=> {
   let loginUser;
   try{
@@ -162,6 +144,7 @@ app.post("/login", async (req, res)=> {
         price:req.body.price,
         img:"FoodPictures/noPic.jpg"
       })
+      return res.json(newFood)
     }
   })
   
@@ -192,6 +175,7 @@ app.post("/login", async (req, res)=> {
     }
     return res.json(foodCard)
   });
+
   app.delete("/foodcards",authenticateTokenStrict, async function(req,res){
     if(req.user.role=="admin"){
       try{
@@ -217,7 +201,6 @@ app.post("/login", async (req, res)=> {
       }
       else{
         Foods.findAll().then((r)=>{
-          console.log(r);
           let arr = []
           arr = r.map(element => element.get())
           return res.json(arr);
@@ -231,7 +214,6 @@ app.post("/login", async (req, res)=> {
       });
     }
   });
-  
   
   app.post("/cart", authenticateTokenStrict, async function(req,res){
     const food = await Foods.findOne({where:{id:req.body.id}})
@@ -272,6 +254,7 @@ app.post("/login", async (req, res)=> {
       return res.sendStatus(403)
     }
   })
+
   app.delete("/cart",authenticateTokenStrict, async function(req,res){
     const cartItem = await Cart.findByPk(req.body.id)
     if(cartItem.userId==req.user.id){
@@ -392,10 +375,6 @@ app.post("/login", async (req, res)=> {
     return res.json("OK")
   })
   
-  
-  
-  
-  
   app.post( '/token', (req, res)=>{
     const refreshToken = req.cookies.refreshToken
     if (refreshToken == null) return res.sendStatus ( 401 )
@@ -418,10 +397,6 @@ app.post("/login", async (req, res)=> {
     res.sendStatus(204)
   })
   
-  
-  
-  
-  // set port, listen for requests
   const PORT = process.env.PORT || 8080;
   app.listen(PORT, async() => {
     await sequelize.authenticate()
@@ -429,17 +404,3 @@ app.post("/login", async (req, res)=> {
     console.log(`Server is running on port ${PORT}.`);
   });
   
-  
-  
-  
-  
-  
-  
-  // function validateCookie(req,res,next){
-  //   const { cookies } = req
-  //   if("refreshToken" in cookies){
-  //     console.log();
-  //   }
-  //   console.log(cookies)
-  //   next()
-  // }

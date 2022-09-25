@@ -33,7 +33,7 @@
           <label for="secondName" class="w-96">Image</label>
           <input @change="setImage" type="file" accept="image/*" />
         </div>
-        <button 
+        <button v-if="props.id" 
         @click="deleteImage"
           class="
             border-2 border-red-500
@@ -137,7 +137,6 @@ const deleteFoodCard = (body) => {
 };
 const deleteImage = (body) => {
   VueServer.put(`/foodcards`,{id:props.id, deleteImage:true}, true).then((resp) => {
-    console.log(resp.body)
     foodCard.value = resp.body
   });
 };
@@ -165,14 +164,14 @@ const saveFoodCard = (e) => {
     if (props.id) {
       VueServer.put("/foodcards", data, true)
         .then((resp) => {
-          msg.value = "New food has been added";
+          msg.value = "The food has been updated";
           foodCard.value = resp.data;
         })
         .catch(() => {});
     } else {
       
       VueServer.post("/foodcards", data, true).then((resp) => {
-        msg.value = "The food has been updated";
+        msg.value = "The food has been added";
         foodCard.value = resp.data;
       });
     }
