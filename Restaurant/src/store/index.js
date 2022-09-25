@@ -1,4 +1,6 @@
 import { defineStore, storeToRefs } from 'pinia'
+import { VueServer } from "../VueServer.js";
+
 
 export const useStore = defineStore('counter', {
   state: () => ({ 
@@ -7,6 +9,7 @@ export const useStore = defineStore('counter', {
     user:"",
     accessToken:"",
     expireTime:"",
+    role:""
   }),
   getters: {
     totalForCartList: state => state.cartList.reduce(function(previousValue, item, index, array) {
@@ -29,7 +32,7 @@ export const useStore = defineStore('counter', {
           this.cartList.push(obj)
         }
       },
-      setCartItems(items){
+       setCartItems(items){
         this.cartList = items
       },
       removeFromCart(id){
@@ -57,7 +60,6 @@ export const useStore = defineStore('counter', {
         },
         emptyCart(){
           this.cartList.splice(0,this.cartList.length)
-          console.log(this.cartList);
         }
       },
     })

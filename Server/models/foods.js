@@ -16,7 +16,11 @@ module.exports = (sequelize, DataTypes) => {
   Foods.init({
     name: DataTypes.STRING,
     img: DataTypes.STRING,
-    price: DataTypes.DECIMAL
+    price: DataTypes.DECIMAL,
+    active:{ 
+      type:DataTypes.BOOLEAN,
+      defaultValue: false,
+    }
   }, {
     sequelize,
     modelName: 'Foods',

@@ -5,6 +5,7 @@ import Login from '../views/Login.vue'
 import Registration from '../views/Registration.vue'
 import OrdersView from '../views/OrdersView.vue'
 import OrderHistory from '../views/OrderHistory.vue'
+import AddUpdateFood from '../views/AddUpdateFood.vue'
 const router = createRouter({
   history: createWebHashHistory (import.meta.env.BASE_URL),
   routes: [
@@ -45,6 +46,17 @@ const router = createRouter({
       path: '/register',
       name: 'register',
       component: Registration
+    },
+    {
+      path: '/addfood',
+      name: 'addfood',
+      component: AddUpdateFood
+    },
+    {
+      path: '/updatefood/:id',
+      name: 'updatefood',
+      component: AddUpdateFood,
+      props: true
     },
   ]
 })

@@ -19,6 +19,7 @@ export class VueServer  {
                 store.expireTime = resp.data.expireTime;
                 store.setCartItems(resp.data.cartInfo)
                 store.setUserName(resp.data.name) 
+                store.role = resp.data.role
                 resolve();
             }).catch((err) => {
                     formDataErrors.value.pass += " " + err.response.data;
@@ -27,6 +28,7 @@ export class VueServer  {
             
     }
     static get(url,authorization){
+        console.log(authorization,"   Authorization");
         return this.request(url,'get',null, authorization)
     }
     static post(url,body, authorization){
@@ -46,6 +48,7 @@ export class VueServer  {
                 store.expireTime = resp.data.expireTime;
                 store.user = resp.data.name 
                 store.userId = resp.data.id
+                store.role = resp.data.role
                 resolve()
             }).catch(()=>{
                 router.push({ name: 'login'})

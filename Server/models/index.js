@@ -33,8 +33,9 @@ db.Order.hasMany(db.Orderdetails);
 db.Order.belongsTo(db.User);
 //db.Order.belongsTo(db.User)
 //db.Order.sync({ force: true })
+//db.Foods.sync({ force: true })
 //db.Orderdetails.sync({ force: true })
  db.sequelize = sequelize;
  db.Sequelize = Sequelize;
- //db.sequelize.sync();
+//db.sequelize.sync();
 module.exports = db;
