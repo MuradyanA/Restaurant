@@ -78,7 +78,7 @@ const disableEnable = () => {
 </style>
 <template>
   <div>
-    <div v-if="showMessageBox" class="drop-shadow-2xl fixed top-36 left-1/2 -translate-x-1/2 w-72 h-32 z-50 border-2 bg-zinc-200 border-zinc-300 rounded-md">
+    <div v-if="showMessageBox" class="drop-shadow-2xl fixed top-36 left-1/2 -translate-x-1/2 w-72 h-auto z-50 border-2 bg-zinc-200 border-zinc-300 rounded-md">
       <div class="flex justify-between bg-sky-600 text-white">
         <h3 class="pl-5">Delete Food Card</h3>
         <button @click="()=>{showMessageBox = false}">

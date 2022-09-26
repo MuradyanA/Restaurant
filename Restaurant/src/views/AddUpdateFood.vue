@@ -133,6 +133,7 @@ const updateActiveStatus = (body) => {
 const deleteFoodCard = (body) => {
   VueServer.delete("/foodcards", { ...body }, true).then(() => {
     foodCard.value = {};
+    router.push({name:"home"})
   });
 };
 const deleteImage = (body) => {
