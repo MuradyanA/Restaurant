@@ -31,10 +31,19 @@ Object.keys(db).forEach(modelName => {
 db.Orderdetails.belongsTo(db.Order);
 db.Order.hasMany(db.Orderdetails);
 db.Order.belongsTo(db.User);
-db.Cart.belongsTo(db.Foods)
+db.Cart.belongsTo(db.Food)
+db.Reminder.belongsTo(db.Food)
+db.Food.hasOne(db.Reminder);
+db.Order.hasOne(db.Transaction);
+db.Food.hasOne(db.Orderdetails);
+db.Reminder.hasMany(db.Transaction,{
+  onDelete: 'CASCADE',
+});
+db.Transaction.belongsTo(db.Reminder);
 //db.Order.belongsTo(db.User)
 //db.Order.sync({ force: true })
-//db.Foods.sync({ force: true })
+//db.Reminder.sync({ alter: true })
+db.Food.sync()
 //db.Orderdetails.sync({ force: true })
  db.sequelize = sequelize;
  db.Sequelize = Sequelize;

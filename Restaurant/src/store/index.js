@@ -9,7 +9,7 @@ export const useStore = defineStore('counter', {
     user:"",
     accessToken:"",
     expireTime:"",
-    role:""
+    role:"",
   }),
   getters: {
     totalForCartList: state => state.cartList.reduce(function(previousValue, item, index, array) {

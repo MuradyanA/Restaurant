@@ -194,6 +194,9 @@
             Purchase
           </button>
         </div>
+        <div v-if="errMessage">
+          <span class="text-rose-600 font-semibold">{{ errMessage }}</span>
+        </div>
       </div>
     </div>
     <div class="flex flex-row justify-center mt-5" v-else>
@@ -241,6 +244,7 @@ import router from "../router";
 import moment from "moment";
 const store = useStore();
 let orderMessage = ref("Your cart is empty ");
+let errMessage = ref("")
 const order = ref({
   firstName: null,
   secondName: null,
@@ -280,13 +284,14 @@ let formatter = new Intl.NumberFormat("en-US", {
 
 const sendOrder = () => {
   VueServer.post("/order", order.value, true)
-    .then(() => {
+    .then((resp) => {
       store.emptyCart();
       orderMessage.value = "Your order has been placed successfully!";
     })
     .catch((err) => {
+      errMessage.value = err.response.data
       err.response.data.errors.forEach((elem) => {
-        //orderErrors.value[elem.path] = elem.message;
+        orderErrors.value[elem.path] = elem.message;
       });
     });
 };

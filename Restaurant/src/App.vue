@@ -45,7 +45,7 @@ onMounted(() => {
               basis-2/12
               hover:text-stone-300
               pl-10
-              ml-72
+              ml-48
               whitespace-nowrap
             "
           >
@@ -53,16 +53,18 @@ onMounted(() => {
           </li>
         </router-link>
         <router-link :to="'/orders'">
-          <li class="basis-2/12 hover:text-stone-300 ml-72">Order</li>
+          <li class="basis-2/12 hover:text-stone-300 ml-48">Order</li>
         </router-link>
-
+        <router-link :to="'/accounting'">
+          <li v-if="store.role=='admin'" class="basis-2/12 hover:text-stone-300 ml-48">Accounting</li>
+        </router-link>
         <router-link :to="'/cart'">
           <li
             class="
               basis-2/12
               hover:text-stone-300
               pl-10
-              ml-72
+              ml-48
               whitespace-nowrap
             "
           >
@@ -76,7 +78,7 @@ onMounted(() => {
           <li
             class="
               whitespace-nowrap
-              ml-72
+              ml-48
               basis-2/12
               hover:text-stone-300
               inline-flex
@@ -101,7 +103,7 @@ onMounted(() => {
           </li>
         </router-link>
         <router-link v-else :to="'/login'">
-          <li class="ml-72 basis-2/12 hover:text-stone-300">Log In</li>
+          <li class="ml-48 basis-2/12 hover:text-stone-300">Log In</li>
         </router-link>
       </ul>
     </div>

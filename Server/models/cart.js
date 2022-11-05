@@ -1,5 +1,5 @@
 'use strict';
-const Foods = require('./foods.js')
+const Food = require('./food.js')
 const {
   Model
 } = require('sequelize');

@@ -2,7 +2,6 @@
   <div class="flex flex-row">
     <div class="w-auto ml-10">
       <form
-
         enctype="multipart/form-data"
         action="/foodcards"
         id="formElem"

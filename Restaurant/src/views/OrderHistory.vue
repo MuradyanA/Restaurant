@@ -1,226 +1,61 @@
 <template>
   <div class="flex flex-row">
     <div class="w-2/3 ml-5">
-      <h1 class="font-sans text-5xl ml-10 mt-5 text-gray-600">ORDER HISTORY</h1>
-      <hr class="mt-5" />
+      <h1 class="font-sans text-5xl mt-5 text-gray-600">ORDER HISTORY</h1>
       <div class="flex flex-col mt-5">
-        <div class="p-2">
-          <div class="flex flex-row">
-            <h3 class="text-xl ml-10">Search In Order History</h3>
-          </div>
-          <div class="flex flex-row align-middle mt-5">
-            <label for="name"
-              >Customer name
-              <input
-                v-model="search.name"
-                class="border-2 p-1 rounded-md"
-                name="name"
-                type="text"
-              />
-            </label>
-            <label class="ml-5" for="orderPeriodStart"
-              >Orders Period
-              <input
-                v-model="search.start"
-                class="border-2 p-1 rounded-md"
-                name="orderPeriodStart"
-                type="datetime-local"
-                required
-              />
-            </label>
-            <label for="orderPeriodEnd">
-              <input
-                v-model="search.end"
-                class="border-2 p-1 rounded-md"
-                name="orderPeriodEnd"
-                type="datetime-local"
-                required
-              />
-            </label>
-
-            <button
-              @click="filterOrders()"
-              type="button"
-              class="
-                bg-sky-500
-                border-2 border-sky-500
-                text-white
-                rounded-md
-                flex
-                p-2
-                ml-3
-              "
-            >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                class="h-6 w-6"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-                stroke-width="2"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"
-                />
-              </svg>
-              Search
-            </button>
-          </div>
-          <p
-            v-if="searchDateErrors.dateErr"
-            class="text-rose-600 font-semibold ml-96"
-          >
-            {{ searchDateErrors.dateErr }}
-          </p>
+        <SearchBar @receive="filterOrders" title="Search in Orders" searchInputName="Customer Name" :periodStart="
+          moment(Date.now() - 4 * (24 * 3600 * 1000))
+            .startOf('date')
+            .format('yyyy-MM-DDTHH:mm')
+        " :periodEnd="
+          moment(Date.now()).endOf('date').format('yyyy-MM-DDTHH:mm')
+        " url="/orderhistory/" renderOnMount="1" />
+        <div class="flex flex-row space-x-4 w-44 p-2 ml-4 sticky top-10 border-2 rounded-xl">
+          <button v-if="additionalButtons" @click="changeStatus('back')" title="back" class="bg-orange-500 rounded-full p-2">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+              stroke="currentColor" class="w-6 h-6 text-white">
+              <path stroke-linecap="round" stroke-linejoin="round"
+                d="M11.25 9l-3 3m0 0l3 3m-3-3h7.5M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+          </button>
+          <button v-if="additionalButtons" @click="changeStatus('forward')" title="forward" class="bg-green-500 rounded-full p-2">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+              stroke="currentColor" class="w-6 h-6 text-white">
+              <path stroke-linecap="round" stroke-linejoin="round"
+                d="M12.75 15l3-3m0 0l-3-3m3 3h-7.5M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+          </button>
+          <button @click="changeStatus('cancel')" title="cancel" class="bg-red-500 rounded-full p-2">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+              stroke="currentColor" class="w-6 h-6 text-white">
+              <path stroke-linecap="round" stroke-linejoin="round"
+                d="M9.75 9.75l4.5 4.5m0-4.5l-4.5 4.5M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+          </button>
         </div>
-        <table class="ml-2 mt-5">
-          <thead class="bg-zinc-400 text-zinc-100">
-            <tr class="border-b-4 border-white">
-              <th class="border-slate-600 p-5">Full Name<br /></th>
-              <th class="border-slate-600 p-5">Date of order</th>
-              <th class="border-slate-600 p-5">Delivery Time</th>
-              <th class="border-slate-600 p-5">Delivery Address</th>
-              <th class="border-slate-600 p-5">Phone Number</th>
-              <th class="border-slate-600 p-5">Status</th>
-              <th class="border-slate-600 p-5"></th>
-            </tr>
-          </thead>
-          <tbody>
-            <template v-if="orders.history.length > 0">
-              <tr
-                class="
-                  cursor-pointer
-                  border-collapse
-                  ml-2
-                  mt-5
-                  text-zinc-600
-                  even:bg-zinc-200
-                  odd:bg-zinc-300
-                "
-                v-for="item in orders.history"
-                :key="item.id"
-                @click="setCurrentDetails(item.id)"
-                :class="item.id == selectedRowId ? 'even:bg-sky-400 odd:bg-sky-400' : 'bg-zinc-200'"
-              >
-                <td class="pl-2">
-                  {{ item.firstName + " " + item.secondName }}
-                </td>
-                <td>
-                  {{ moment(item.createdAt).format("DD/MM/YYYY, h:mm a") }}
-                </td>
-                <td>
-                  {{ moment(item.deliveryTime).format("DD/MM/YYYY, h:mm a") }}
-                </td>
-                <td class="pl-2">
-                  {{
-                    item.city +
-                    "/" +
-                    item.street +
-                    "/" +
-                    item.building +
-                    "/" +
-                    item.appartments
-                  }}
-                </td>
-                <td class="pl-2">{{ item.phoneNumber }}</td>
-                <td class="pl-2">{{ item.status }}</td>
-                <td
-                  class="w-28 flex justify-between px-2 align-middle h-14 pl-2"
-                >
-                  <button
-                  title="Back"
-                    v-if="additionalButtons == true"
-                    @click="changeStatus('back', item.id)"
-                  >
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      class="h-6 w-6"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke="currentColor"
-                      stroke-width="2"
-                    >
-                      <path
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        d="M11 15l-3-3m0 0l3-3m-3 3h8M3 12a9 9 0 1118 0 9 9 0 01-18 0z"
-                      />
-                    </svg>
-                  </button>
-                  <button
-                  title="Forward"
-                    v-if="additionalButtons == true"
-                    @click="changeStatus('forward', item.id)"
-                  >
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      class="h-6 w-6"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke="currentColor"
-                      stroke-width="2"
-                    >
-                      <path
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        d="M13 9l3 3m0 0l-3 3m3-3H8m13 0a9 9 0 11-18 0 9 9 0 0118 0z"
-                      />
-                    </svg>
-                  </button>
-                  <button
-                  title="Cancel Order"
-                    v-if="item.status !== 'Canceled'"
-                    @click="changeStatus('cancel', item.id)"
-                  >
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      class="h-6 w-6"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke="currentColor"
-                      stroke-width="2"
-                    >
-                      <path
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"
-                      />
-                    </svg>
-                  </button>
-                </td>
-              </tr>
-            </template>
-          </tbody>
-        </table>
+
+        <MyTable @row-selected="
+          (id) => {
+            selectedRowId = id
+          }
+        " tableName="" :tableHeaders="[
+          'ID',
+          'Full Name',
+          'Date of order',
+          'Delivery Time',
+          'Delivery Address',
+          'Phone Number',
+          'Status',
+        ]" :tableRows="ordersHistory" idField="id" />
       </div>
     </div>
-    <div class="pt-40">
-      <h4 class="font-sans text-2xl ml-5 text-gray-600 mb-11">ORDER DETAILS</h4>
-      <table class="border-1 border-zinc-200 ml-2 sticky top-0">
-        <hr class="mt-1" />
-        <thead class="bg-zinc-400 text-zinc-100">
-          <tr class="mb-2">
-            <th class="px-3 border-slate-600 p-5">Food name</th>
-            <th class="px-3 border-slate-600 p-5">Quantity</th>
-            <th class="px-3 border-slate-600 p-5">Amount</th>
-          </tr>
-        </thead>
-        <tbody class="bg-zinc-200 mt-5">
-          <tr
-            class="even:bg-zinc-200 odd:bg-zinc-300 odd:text-zinc-600"
-            v-for="item in currentDetails"
-            :key="item.id"
-          >
-            <td class="px-3 border-slate-600 p-5">{{ item.foodName }}</td>
-            <td class="px-3 border-slate-600 p-5">{{ item.quantity }}</td>
-            <td class="px-3 border-slate-600 p-5">
-              {{ item.price * item.quantity }}
-            </td>
-          </tr>
-        </tbody>
-      </table>
+    <div class="pt-40 ">
+      <h4 class="font-sans text-2xl ml-5 text-gray-600">ORDER DETAILS</h4>
+      <MyTable class="sticky top-0" tableName="" :tableHeaders="[
+        'Food Name',
+        'Quantity',
+        'Price per One',
+      ]" :tableRows="orderDetails" idField="foodName"/>
     </div>
   </div>
 </template>
@@ -231,60 +66,84 @@
 </style>
 <script setup>
 import { useStore } from "@/store";
-import { onMounted, ref, reactive } from "vue";
+import { onMounted, ref, reactive, defineComponent, computed } from "vue";
 import moment from "moment";
 import { VueServer } from "../VueServer.js";
+import SearchBar from "@/components/SearchBar.vue";
+import MyTable from "@/components/MyTable.vue";
 
 const store = useStore();
+const components = defineComponent({ SearchBar, MyTable });
 const orders = reactive({ history: [] });
 const currentDetails = ref([]);
 const selectedRowId = ref(0);
 const additionalButtons = ref(false);
-const search = ref({
-  name: "",
-  start: "",
-  end: "",
+let formatter = new Intl.NumberFormat("en-US", {
+  style: "currency",
+  currency: "AMD",
 });
-const searchDateErrors = ref({
-  dateErr: "",
+
+const orderDetails = computed(() => {
+  if (selectedRowId.value) {
+    const details = orders.history.find(item => item.id == selectedRowId.value).Orderdetails
+    return details.map((elem) => {
+      let { foodName, quantity, price } = elem
+      return { foodName, quantity, price:formatter.format(price) }
+    })
+
+  } else {
+    return []
+  }
+
+})
+
+
+const ordersHistory = computed(() => {
+  return orders.history.map((el) => {
+    let {
+      id,
+      firstName,
+      secondName,
+      city,
+      street,
+      building,
+      appartments,
+      phoneNumber,
+      status,
+      deliveryTime,
+      createdAt,
+    } = el;
+    return {
+      id,
+      fullName: `${firstName} ${secondName}`,
+      dateOfOrder: moment(createdAt).format("DD/MM/YYYY, h:mm a"),
+      deliveryTime: moment(deliveryTime).format("DD/MM/YYYY, h:mm a"),
+      deliveryAddress: `${city}/ ${street}/ ${building}/ ${appartments}`,
+      phoneNumber,
+      status,
+    };
+  });
 });
+
 const setCurrentDetails = (id) => {
   currentDetails.value = orders.history.find((item) => {
     return item.id == id;
   }).Orderdetails;
   selectedRowId.value = id;
 };
-onMounted(() => {
-  search.value.start = moment(Date.now() - 4 * (24 * 3600 * 1000)).startOf('date').format(
-    "yyyy-MM-DDTHH:mm"
-  );
-  search.value.end = moment(Date.now()).endOf('date').format("yyyy-MM-DDTHH:mm");
-  filterOrders();
-});
-const changeStatus = (button, orderId) => {
-  VueServer.put("/order", { button, orderId }, true).then(function (response) {
+const changeStatus = (button) => {
+  if(selectedRowId.value==0){
+    alert("Please select a row in the table")
+  }
+  VueServer.put("/order", { button, orderId:selectedRowId.value }, true).then(function (response) {
     orders.history.find(function (item) {
-      return item.id == orderId;
+      return item.id == selectedRowId.value;
     }).status = response.data.status;
   });
 };
 
-const filterOrders = () => {
-  let url = "/orderhistory/?";
-  if (search.value.name) {
-    url += `name=${search.value.name}&`;
-  }
-  if (search.value.start > search.value.end) {
-    searchDateErrors.value.dateErr =
-      "End of the the date must be bigger than the start";
-    return;
-  }
-  url += `start=${moment(search.value.start).format(
-    "yyyy-MM-DDTHH:mm"
-  )}&end=${moment(search.value.end).format("yyyy-MM-DDTHH:mm")}`;
-  VueServer.get(url, true).then(function (response) {
-    orders.history = response.data.orderItems;
-    additionalButtons.value = response.data.additionalButtons;
-  });
+const filterOrders = (response) => {
+  orders.history = response.data.orderItems;
+  additionalButtons.value = response.data.additionalButtons;
 };
 </script>

@@ -1,5 +1,5 @@
 'use strict';
-const Order = require('./orders')
+const Order = require('./order')
 const {
   Model
 } = require('sequelize');
