@@ -34,11 +34,8 @@
           </button>
         </div>
 
-        <MyTable @row-selected="
-          (id) => {
-            selectedRowId = id
-          }
-        " tableName="" :tableHeaders="[
+        <MyTable @row-selected="getDetails"
+         tableName="" :tableHeaders="[
           'ID',
           'Full Name',
           'Date of order',
@@ -55,7 +52,7 @@
         'Food Name',
         'Quantity',
         'Price per One',
-      ]" :tableRows="orderDetails" idField="foodName"/>
+      ]" :tableRows="details" idField="foodName"/>
     </div>
   </div>
 </template>
@@ -76,6 +73,7 @@ const store = useStore();
 const components = defineComponent({ SearchBar, MyTable });
 const orders = reactive({ history: [] });
 const currentDetails = ref([]);
+const details = ref([])
 const selectedRowId = ref(0);
 const additionalButtons = ref(false);
 let formatter = new Intl.NumberFormat("en-US", {
@@ -83,31 +81,12 @@ let formatter = new Intl.NumberFormat("en-US", {
   currency: "AMD",
 });
 
-const orderDetails = computed(() => {
-  if (selectedRowId.value) {
-    const details = orders.history.find(item => item.id == selectedRowId.value).Orderdetails
-    return details.map((elem) => {
-      let { foodName, quantity, price } = elem
-      return { foodName, quantity, price:formatter.format(price) }
-    })
-
-  } else {
-    return []
-  }
-
-})
-
-
 const ordersHistory = computed(() => {
   return orders.history.map((el) => {
     let {
       id,
-      firstName,
-      secondName,
-      city,
-      street,
-      building,
-      appartments,
+      fullName,
+      deliveryAddress,
       phoneNumber,
       status,
       deliveryTime,
@@ -115,15 +94,22 @@ const ordersHistory = computed(() => {
     } = el;
     return {
       id,
-      fullName: `${firstName} ${secondName}`,
-      dateOfOrder: moment(createdAt).format("DD/MM/YYYY, h:mm a"),
-      deliveryTime: moment(deliveryTime).format("DD/MM/YYYY, h:mm a"),
-      deliveryAddress: `${city}/ ${street}/ ${building}/ ${appartments}`,
+      fullName,
+      dateOfOrder: moment(new Date(createdAt)).format("DD/MM/YYYY, h:mm a"),
+      deliveryTime: moment(new Date(deliveryTime)).format("DD/MM/YYYY, h:mm a"),
+      deliveryAddress,
       phoneNumber,
       status,
     };
   });
 });
+
+const getDetails = (e) => {
+  selectedRowId.value = e
+  VueServer.get(`/orderdetails/?orderId=${e}`, true).then((resp)=>{
+    details.value = resp.data
+  })
+}
 
 const setCurrentDetails = (id) => {
   currentDetails.value = orders.history.find((item) => {

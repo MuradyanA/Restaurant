@@ -42,19 +42,19 @@ const displayFoodName = () => {
   if (rmd) {
     foodNameLable.value = rmd.foodName
   }
-
-
 }
+
+// const refreshPage = () => {
+//   window.location.reload();
+// }
+
 const getReminders = () => {
   VueServer.get("/reminder", true).then((response) => {
     reminders.value = response.data
-
   })
 }
 const transactionsReceived = (resp) => {
   transactions.value = resp.data
-
-
 }
 const deleteTransaction = (resp) => {
   if (selectedRowId.value == 0) {
@@ -79,18 +79,25 @@ const deleteTransaction = (resp) => {
         <hr />
         <label class="w-96">Food Id </label>
         <div class="flex flex-row">
-          <input @change="displayFoodName" v-model="formData.updateQtyFoodId" class="text-gray-600 rounded-md p-1 w-40"
+          <input @change="displayFoodName" v-model="formData.updateQtyFoodId" class="text-gray-600 rounded-md p-1 w-2/3"
             type="number" /><span class="ml-7">{{ foodNameLable }}</span>
         </div>
         <label class="w-96">Sum (can be positive or negative)</label>
-        <input v-model="formData.updateQtyQuantity" class="text-gray-600 rounded-md p-1 w-40" type="number" />
+        <input v-model="formData.updateQtyQuantity" class="text-gray-600 rounded-md p-1 w-2/3" type="number" />
         <button @click.prevent="saveNewQuantity" class="border-2 border-sky-600 w-32 bg-sky-600 rounded-md p-1">
           Save
         </button>
         <p v-if="msg" class="text-green-700 font-semibold">{{ msg }}</p>
         <p v-if="errorMsg" class="text-red-700 font-semibold">{{ errorMsg }}</p>
       </form>
-      <h4 class="font-sans text-2xl mt-10 text-gray-600">Reminders</h4>
+      <h4 class=" flex flex-row font-sans text-2xl mt-10 text-gray-600">Remainders</h4>
+      <button title="Refresh" class="flex flex-row" @click="getReminders">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
+          class="w-6 h-6">
+          <path stroke-linecap="round" stroke-linejoin="round"
+            d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99" />
+        </svg>
+      </button>
       <div class="flex flex-row">
         <MyTable @row-selected="
           (id) => {

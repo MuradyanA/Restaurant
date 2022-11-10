@@ -246,9 +246,9 @@ app.post("/reminder", authenticateToken, async (req, res) => {
   if (reminder !== null) {
     return res.sendStatus(200);
   }
-  const findFood = await Food.findOne({where:{id:req.body.foodId}});
+  const findFood = await Food.findOne({ where: { id: req.body.foodId } });
   if (findFood !== null) {
-    const newReminder =  await Reminder.create({
+    const newReminder = await Reminder.create({
       reminder: 0,
       FoodId: req.body.foodId,
     });
@@ -259,7 +259,9 @@ app.post("/reminder", authenticateToken, async (req, res) => {
 });
 
 app.delete("/reminder", authenticateToken, async (req, res) => {
-  const reminder = await Reminder.findOne({where:{FoodId:req.body.foodId}});
+  const reminder = await Reminder.findOne({
+    where: { FoodId: req.body.foodId },
+  });
   if (reminder !== null) {
     await reminder.destroy();
     return res.sendStatus(200);
@@ -436,53 +438,50 @@ app.delete("/cart", authenticateTokenStrict, async function (req, res) {
 });
 
 app.get("/orderhistory", authenticateTokenStrict, async function (req, res) {
-  let orderItems;
-  if (req.query.start == undefined || req.query.end == undefined) {
+  if (
+    !moment.isDate(new Date(req.query.start)) ||
+    !moment.isDate(new Date(req.query.end))
+  ) {
     return res
       .sendStatus(400)
       .json({ err: "Start and End dates must be provided" });
   }
-  let filterData = {
-    createdAt: {
-      [Op.between]: [new Date(req.query.start), new Date(req.query.end)],
-    },
-  };
+  let additionalButtons = true;
+  let queryText =
+    '\
+  SELECT Orders.id, \
+      (firstName || " " || secondName) as fullName, \
+      Orders.createdAt as createdAt,\
+      Orders.deliveryTime as deliveryTime, \
+      (city || ", " || street || ", " || building || ", " || appartments) AS deliveryAddress, \
+      Orders.phoneNumber as phoneNumber,\
+      Orders.status as status \
+  from\
+    Orders \
+  where \
+    Orders.createdAt >= :start AND Orders.createdAt <= :end';
   if (req.query.name) {
-    filterData[Op.or] = [
-      {
-        firstName: {
-          [Op.like]: `${req.query.name}%`,
-        },
-      },
-      {
-        secondName: {
-          [Op.like]: `${req.query.name}%`,
-        },
-      },
-    ];
+    queryText += " AND fullName like :name";
   }
-  let additionalButtons;
-  if (req.user.role == "admin") {
-    orderItems = await Order.findAll({
-      where: filterData,
-      include: Orderdetails,
-    });
-    additionalButtons = true;
-  } else {
-    filterData.UserId = req.user.id;
-    orderItems = await Order.findAll({
-      where: filterData,
-      include: Orderdetails,
-    });
+  if (req.user.role !== "admin") {
+    queryText += " AND UserId = :userId ";
     additionalButtons = false;
   }
 
+  const [orderItems, metadata] = await sequelize.query(queryText, {
+    replacements: {
+      name: `%${req.query.name}%`,
+      userId: req.user.id,
+      start: moment(new Date(req.query.start)).format("YYYY-MM-DD HH:mm:ss"),
+      end: moment(new Date(req.query.end)).format("YYYY-MM-DD HH:mm:ss"),
+    },
+  });
   return res.json({ orderItems, additionalButtons });
 });
 
 app.put("/order", authenticateTokenStrict, async function (req, res) {
   const statuses = ["Pending", "Preparing", "Delivering", "Finished"];
-  const order = await Order.findByPk(req.body.orderId);
+  const order = await Order.findOne({ where: { id: req.body.orderId } });
   let statusIndex = statuses.indexOf(order.status);
   if (statusIndex == -1) {
     return res.json({ status: order.status });
@@ -500,10 +499,29 @@ app.put("/order", authenticateTokenStrict, async function (req, res) {
     }
   }
   if (req.body.button == "cancel" && statusIndex < 2) {
+    const orderdetails = await Orderdetails.findOne({
+      where: { OrderId: req.body.orderId },
+    });
+    let fdId = orderdetails.FoodId;
+    let fdQty = orderdetails.quantity;
+    let foodInReminder = await Reminder.findOne({ where: { FoodId: fdId } });
+    foodInReminder.reminder += Number(fdQty);
+    await foodInReminder.save();
     order.status = "Canceled";
   }
   await order.save();
   return res.json({ status: order.status });
+});
+
+app.get("/orderdetails", authenticateToken, async function (req, res) {
+  if (!Number.isInteger(+req.query.orderId)) {
+    return res.status(400).json("An error occured...");
+  }
+  const orderDetails = await Orderdetails.findAll({
+    attributes: ["foodName", "quantity", "price"],
+    where: { OrderId: req.query.orderId },
+  });
+  return res.json(orderDetails);
 });
 
 app.post("/order", authenticateTokenStrict, async function (req, res) {
@@ -579,7 +597,9 @@ app.post("/order", authenticateTokenStrict, async function (req, res) {
     if (err.name == "OutOfStockError") {
       return res.status(400).json(err.message);
     } else {
-      return res.status(400).json("An error occured...");
+      return res
+        .status(400)
+        .json("An error occured...Please fill all the fields");
     }
   }
 });
